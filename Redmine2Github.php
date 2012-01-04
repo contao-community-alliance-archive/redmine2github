@@ -657,7 +657,7 @@ class Redmine2Github
 
         fclose($objFH);
 
-        $strFileBody = str_replace(array("Ãƒâ€“", "Ãƒâ€ž", "ÃƒÅ“", "ÃƒÂ¶", "ÃƒÂ¤", "ÃƒÂ¼"), array("##Ãƒâ€“", "##Ãƒâ€ž", "##ÃƒÅ“", "##ÃƒÂ¶", "##ÃƒÂ¤", "##ÃƒÂ¼"), $strFileBody);
+        $strFileBody = str_replace(array("Ä", "Ö", "Ü", "ä", "ö", "ü"), array("##Ä", "##Ö", "##Ü", "##ä", "##ö", "##ü"), $strFileBody);
 
         // Write Temp file
         $objTFH = tmpfile();
@@ -675,7 +675,7 @@ class Redmine2Github
         {
             foreach ($value as $keyField => $valueField)
             {
-                $valueField = str_replace(array("##Ãƒâ€“", "##Ãƒâ€ž", "##ÃƒÅ“", "##ÃƒÂ¶", "##ÃƒÂ¤", "##ÃƒÂ¼"), array("Ãƒâ€“", "Ãƒâ€ž", "ÃƒÅ“", "ÃƒÂ¶", "ÃƒÂ¤", "ÃƒÂ¼"), $valueField);
+                $valueField = str_replace(array("##Ä", "##Ö", "##Ü", "##ä", "##ö", "##ü"), array("Ä", "Ö", "Ü", "ä", "ö", "ü"), $valueField);
 
                 switch ($keyField)
                 {
