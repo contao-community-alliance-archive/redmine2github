@@ -687,7 +687,8 @@ class Redmine2Github
     }
 
     /**
-     * Execute external program.
+     * Execute external program
+     * Big thanks to tpl[aka]tril for the inspiration
      *
      * @arg mixed...
      * @return boolean
