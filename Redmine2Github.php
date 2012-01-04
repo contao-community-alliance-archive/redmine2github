@@ -688,7 +688,7 @@ class Redmine2Github
 
     /**
      * Execute external program
-     * Big thanks to tpl[aka]tril for the inspiration
+     * Big thanks to Tristan Lins <tristan.lins@infinitysoft.de> for the inspiration
      *
      * @arg mixed...
      * @return boolean
@@ -728,9 +728,6 @@ class Redmine2Github
         {
             throw new Exception("Program execution failed command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr");
         }
-
-        //echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
-        //echo "\n<br/><br/>\n";
 
         $mixResponse = explode("\n", $strOut);
         $arrHeader = array();
