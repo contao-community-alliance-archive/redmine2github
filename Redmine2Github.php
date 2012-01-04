@@ -82,7 +82,6 @@ class Redmine2Github
         "Version",
         "Description",
     );
-    
     protected $arrSearch = array(
         '/`/',
         '/([^ ]+)@([a-z0-9\.-]+\.[a-z]{2,6})/i',
@@ -106,7 +105,6 @@ class Redmine2Github
         '/www\.typolight\.org/',
         '/http:\/\/dev\.typolight\.org\/ticket\/([0-9]+)/'
     );
-    
     protected $arrReplace = array(
         "'",
         '$1[_at_]$2',
@@ -153,34 +151,23 @@ class Redmine2Github
      */
     public function run()
     {
-        echo " CSV ";
-
         // Run CSV
         $this->checkFile();
         $this->importCSV();
 
-        echo " Issues ";
-
         // Run issues
         $this->getAllIssues();
-
-        echo " Labels ";
 
         // Run Labels
         $this->getAllLabels();
         $this->runUpdateLabels();
 
-        echo " Milestones ";
-
         // Run milestones
         $this->getAllMilestones();
 
-        echo " Import ";
-
         // Build Issue
         $this->runImportIssues();
-
-        echo " Done ";
+        echo "Done";
     }
 
     /**
@@ -495,9 +482,6 @@ class Redmine2Github
 
         $arrResponse = $arrResponse["data"];
 
-        print_r($arrResponse);
-        echo "\n\n";
-
         $this->arrMilestones[$strName] = $arrResponse;
 
         if ($arrResponse === FALSE)
@@ -698,9 +682,9 @@ class Redmine2Github
         // execute the command
         $proc = proc_open(
                 $strExecute, array(
-                    0 => array("pipe", "r"),
-                    1 => array("pipe", "w"),
-                    2 => array("pipe", "w")
+            0 => array("pipe", "r"),
+            1 => array("pipe", "w"),
+            2 => array("pipe", "w")
                 ), $arrPipes);
 
         // test if command start failed
@@ -755,8 +739,7 @@ class Redmine2Github
 
         if (strpos($arrHeader["Status"], "200 OK") === FALSE && strpos($arrHeader["Status"], "201 Created") === FALSE)
         {
-            echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
-            echo "\n<br /><br />\n";
+            //echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";           
 
             throw new Exception("We have an error on server side with id: " . $arrHeader["Status"] . "\n<br />\n");
         }
