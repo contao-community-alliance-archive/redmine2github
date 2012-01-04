@@ -82,6 +82,7 @@ class Redmine2Github
         "Version",
         "Description",
     );
+    
     protected $arrSearch = array(
         '/`/',
         '/([^ ]+)@([a-z0-9\.-]+\.[a-z]{2,6})/i',
@@ -105,6 +106,7 @@ class Redmine2Github
         '/www\.typolight\.org/',
         '/http:\/\/dev\.typolight\.org\/ticket\/([0-9]+)/'
     );
+    
     protected $arrReplace = array(
         "'",
         '$1[_at_]$2',
@@ -133,7 +135,6 @@ class Redmine2Github
     /* -------------------------------------------------------------------------
      * Core Part
      */
-    // Vars
     protected $strPath;
     protected $arrCSV;
     protected $arrLabels;
@@ -167,7 +168,8 @@ class Redmine2Github
 
         // Build Issue
         $this->runImportIssues();
-        echo "Done";
+
+        echo " Done ";
     }
 
     /**
@@ -354,16 +356,33 @@ class Redmine2Github
      */
     protected function getAllMilestones()
     {
-        $strCurl = "curl -i " . $this->strRepoURL . "/milestones -X GET";
+        // Load all opend milestones        
+        $strCurl = "curl -i '" . $this->strRepoURL . "/milestones?state=open' -X GET";
 
-        $arrMilestones = $this->executeProc($strCurl);
-        $arrMilestones = $arrMilestones["data"];
+        $arrMilestonesOpened = $this->executeProc($strCurl);
+        $arrMilestonesOpened = $arrMilestonesOpened["data"];
 
-        if (!is_array($arrMilestones) || (key_exists("message", $arrMilestones) && $arrMilestones["message"] == "Not Found"))
+        if (!is_array($arrMilestonesOpened) || (key_exists("message", $arrMilestonesOpened) && $arrMilestonesOpened["message"] == "Not Found"))
         {
             throw new Exception("Could not load labels from repo.");
         }
 
+        // Load all closed milestones
+        $strCurl = "curl -i '" . $this->strRepoURL . "/milestones?state=closed' -X GET";
+
+        $arrMilestonesClosed = $this->executeProc($strCurl);
+        $arrMilestonesClosed = $arrMilestonesClosed["data"];
+
+        if (!is_array($arrMilestonesClosed) || (key_exists("message", $arrMilestonesClosed) && $arrMilestonesClosed["message"] == "Not Found"))
+        {
+            throw new Exception("Could not load labels from repo.");
+        }
+        
+        // Merge both
+        $arrMilestones = array();
+        $arrMilestones = array_merge($arrMilestonesClosed, $arrMilestonesOpened);
+        
+        // Set Title as key
         foreach ($arrMilestones as $key => $value)
         {
             $this->arrMilestones[$value["title"]] = $value;
@@ -638,7 +657,7 @@ class Redmine2Github
 
         fclose($objFH);
 
-        $strFileBody = str_replace(array("Ã–", "Ã„", "Ãœ", "Ã¶", "Ã¤", "Ã¼"), array("##Ã–", "##Ã„", "##Ãœ", "##Ã¶", "##Ã¤", "##Ã¼"), $strFileBody);
+        $strFileBody = str_replace(array("Ãƒâ€“", "Ãƒâ€ž", "ÃƒÅ“", "ÃƒÂ¶", "ÃƒÂ¤", "ÃƒÂ¼"), array("##Ãƒâ€“", "##Ãƒâ€ž", "##ÃƒÅ“", "##ÃƒÂ¶", "##ÃƒÂ¤", "##ÃƒÂ¼"), $strFileBody);
 
         // Write Temp file
         $objTFH = tmpfile();
@@ -656,7 +675,7 @@ class Redmine2Github
         {
             foreach ($value as $keyField => $valueField)
             {
-                $valueField = str_replace(array("##Ã–", "##Ã„", "##Ãœ", "##Ã¶", "##Ã¤", "##Ã¼"), array("Ã–", "Ã„", "Ãœ", "Ã¶", "Ã¤", "Ã¼"), $valueField);
+                $valueField = str_replace(array("##Ãƒâ€“", "##Ãƒâ€ž", "##ÃƒÅ“", "##ÃƒÂ¶", "##ÃƒÂ¤", "##ÃƒÂ¼"), array("Ãƒâ€“", "Ãƒâ€ž", "ÃƒÅ“", "ÃƒÂ¶", "ÃƒÂ¤", "ÃƒÂ¼"), $valueField);
 
                 switch ($keyField)
                 {
@@ -739,7 +758,7 @@ class Redmine2Github
 
         if (strpos($arrHeader["Status"], "200 OK") === FALSE && strpos($arrHeader["Status"], "201 Created") === FALSE)
         {
-            //echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";           
+            //echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
 
             throw new Exception("We have an error on server side with id: " . $arrHeader["Status"] . "\n<br />\n");
         }
