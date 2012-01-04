@@ -142,7 +142,7 @@ class Redmine2Github
     protected $arrIssues;
     protected $arrMilestones;
 
-    public function red2git()
+    public function Redmine2Github()
     {
         $this->strPath = getcwd();
         $this->arrLabels = array();
@@ -619,7 +619,7 @@ class Redmine2Github
     {
         if (!file_exists($this->strPath . "/" . $this->strCSVPath))
         {
-            throw new Exception("Missing CSV fiel");
+            throw new Exception("Missing CSV file");
         }
     }
 
