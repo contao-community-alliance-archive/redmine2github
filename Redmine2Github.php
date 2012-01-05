@@ -103,8 +103,6 @@ class Redmine2Github
         '/\n\*\* /',
         '/\n*!([^-][^!]+)!/',
         '/commit:/',
-        '/www\.typolight\.org/',
-        '/http:\/\/dev\.typolight\.org\/ticket\/([0-9]+)/'
     );
     
     protected $arrReplace = array(
@@ -127,8 +125,6 @@ class Redmine2Github
         "\n* ",
         "\n\n![]($1)",
         '',
-        'www.contao.org',
-        '#$1'
     );
 
 
