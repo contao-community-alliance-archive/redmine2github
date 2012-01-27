@@ -134,8 +134,8 @@ class Redmine2Github
     protected $strPath;
     protected $arrCSV;
     protected $arrLabels;
-    protected $arrIssues;
-    protected $arrMilestones;
+    protected $arrIssues = array();
+    protected $arrMilestones = array();
 
     public function Redmine2Github()
     {
@@ -165,7 +165,7 @@ class Redmine2Github
         // Build Issue
         $this->runImportIssues();
 
-        echo " Done ";
+        echo "Done\n";
     }
 
     /**
@@ -300,7 +300,7 @@ class Redmine2Github
             {
                 $arrResponse = $this->executeProc($value["execute"]);
 
-                if ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials")
+                if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
                 {
                     throw new Exception("Wrong user login.");
                 }
@@ -314,10 +314,12 @@ class Redmine2Github
                 {
                     $this->closeIssue($arrResponse["data"]["number"]);
                 }
+
+                echo "Imported #" . $value["id"] . " " . $value['Topic'] . "\n";
             }
             catch (Exception $exc)
             {
-                echo" Skiped " . $value["id"] . " with message: " . $exc->getMessage() . " <br />\n";
+                echo "Skiped #" . $value["id"] . " with message: " . $exc->getMessage() . "\n";
             }
         }
     }
@@ -459,7 +461,7 @@ class Redmine2Github
 
         $arrResponse = $this->executeProc($strCurl);
 
-        if ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials")
+        if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
         {
             throw new Exception("Error by login with user: $this->strRepoUser to create labels.");
         }
@@ -490,7 +492,7 @@ class Redmine2Github
 
         $arrResponse = $this->executeProc($strCurl);
 
-        if ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials")
+        if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
         {
             throw new Exception("Error by login with user: $this->strRepoUser to create milestones.");
         }
@@ -725,7 +727,7 @@ class Redmine2Github
         // log if process does not terminate without errors
         if ($intCode != 0)
         {
-            throw new Exception("Program execution failed command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr");
+            throw new Exception("Program execution failed command: $strExecute\n  stdout: $strOut\n stderr: $strErr");
         }
 
         $mixResponse = explode("\n", $strOut);
@@ -756,7 +758,7 @@ class Redmine2Github
         {
             //echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
 
-            throw new Exception("We have an error on server side with id: " . $arrHeader["Status"] . "\n<br />\n");
+            throw new Exception("We have an error on server side with id: " . $arrHeader["Status"] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
         }
 
         return array("data" => $mixResponse, "header" => $arrHeader);
