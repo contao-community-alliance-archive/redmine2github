@@ -62,25 +62,25 @@ class Redmine2Github
      */
     protected $arrCSVKeys = array(
         "id",
-        "Status",
         "Project",
         "Tracker",
+        "Parent task",
+        "Status",
         "Priority",
         "Topic",
+        "Author",        
         "Assigned",
+        "Updated",        
         "Category",
         "Target Version",
-        "Autor",
         "Beginning",
         "Due Date",
-        "Finished",
         "Estimated time",
-        "Parent task",
+        "Percentage done",
         "Created",
-        "Updated",
         "Installed extensions",
-        "Version",
-        "Description",
+        "Contao version",     
+        "Description"
     );
     
     protected $arrSearch = array(
