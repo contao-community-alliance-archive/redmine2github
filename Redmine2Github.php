@@ -132,16 +132,44 @@ class Redmine2Github
 	/* -------------------------------------------------------------------------
 	 * Core Part
 	 */
-	protected $strPath;
-	protected $arrCSV;
-	protected $arrLabels;
+	protected $strPath = '';
+	protected $arrCSV = '';
+	protected $arrLabels = array();
 	protected $arrIssues = array();
 	protected $arrMilestones = array();
+	protected $blnOneTicketOnly = false;
+	protected $intTicketId = 0;
 
+
+	/**
+	 * Basic use:
+	 * php Redmine2Github.php
+	 * 
+	 * It will get the default config "config.php" but you can specify another if you like (to easily switch)
+	 * php Redmine2Github.php config:myconfig
+	 * 
+	 * You can also import one ticket only for testing purposes
+	 * php Redmine2Github.php 133
+	 */
 	public function __construct()
 	{
+		$strConfig = 'config.php';
+		
+		// custom config
+		if (strpos($_SERVER['argv'][1], 'config:') !== false)
+		{
+			$chunks = explode(':', $_SERVER['argv'][1]);
+			$strConfig = $chunks[1] . '.php';
+		}
+
+		// one ticket only
+		if ($_SERVER['argv'][2] && is_numeric($_SERVER['argv'][2]))
+		{
+			$this->blnOneTicketOnly = true;
+			$this->intTicketId = (int) $_SERVER['argv'][2];
+		}
+
 		$this->strPath = getcwd();
-		$this->arrLabels = array();
 	}
 
 	/**
