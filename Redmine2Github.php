@@ -139,6 +139,7 @@ class Redmine2Github
 	protected $arrMilestones = array();
 	protected $blnOneTicketOnly = false;
 	protected $intTicketId = 0;
+	protected $arrConfig = array();
 
 
 	/**
@@ -170,6 +171,16 @@ class Redmine2Github
 		}
 
 		$this->strPath = getcwd();
+
+		// load config
+		if (!file_exists($this->strPath . '/' . $strConfig))
+		{
+			throw new Exception("Configuration file $strConfig could not be loaded.");
+		}
+		
+		include_once $this->strPath . '/' . $strConfig;
+		
+		$this->arrConfig = $arrRedmine2GithubConfig;
 	}
 
 	/**
@@ -807,6 +818,7 @@ try
 }
 catch (Exception $exc)
 {
-	echo 'Sorry we have an error:  ';
+	echo 'Sorry we have an error: ';
 	echo $exc->getMessage();
+	echo "\n";
 }
