@@ -391,6 +391,11 @@ class Redmine2Github
 			$strCurl = "curl -i '" . $this->arrConfig['repoURL'] . "/issues?state=open&page=$i'";
 			$arrIssuesOpen = $this->executeProc($strCurl);
 
+			if (!is_array($arrIssuesOpen['data']))
+			{
+				$arrIssuesOpen['data'] = array();
+			}
+
 			$arrIssues = array_merge($arrIssues, $arrIssuesOpen['data']);
 
 			if (key_exists('Link', $arrIssuesOpen['header']))
@@ -411,6 +416,11 @@ class Redmine2Github
 		{
 			$strCurl = "curl -i '" . $this->arrConfig['repoURL'] . "/issues?page=$i&state=closed'";
 			$arrIssuesClosed = $this->executeProc($strCurl);
+			
+			if (!is_array($arrIssuesClosed['data']))
+			{
+				$arrIssuesClosed['data'] = array();
+			}
 
 			$arrIssues = array_merge($arrIssues, $arrIssuesClosed['data']);
 
