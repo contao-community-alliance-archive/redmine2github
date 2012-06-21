@@ -191,8 +191,8 @@ class Redmine2Github
 		// Build Issue
 		foreach ($this->arrCSV as $key => $value)
 		{
-			// Skip first one and empty entries
-			if ($key == 0 || empty($value))
+			// Skip empty entries
+			if (empty($value))
 			{
 				continue;
 			}
@@ -713,7 +713,8 @@ class Redmine2Github
 				
 			}
 			
-			$this->arrCSV = $arrCSVnew;
+			$this->arrCSV = array();
+			$this->arrCSV[] = $arrCSVnew;
 		}
 	}
 
