@@ -166,7 +166,7 @@ class Redmine2Github
 		// Build Issue
 		$this->runImportIssues();
 
-		echo "Done\n";
+		echo 'Done\n';
 	}
 
 	/**
@@ -178,16 +178,16 @@ class Redmine2Github
 
 		foreach ($this->arrAcceptedLabels as $key => $value)
 		{
-			if (!key_exists($value["name"], $this->arrLabels) && !in_array($value["name"], $arrInsert))
+			if (!key_exists($value['name'], $this->arrLabels) && !in_array($value['name'], $arrInsert))
 			{
-				if (!$this->addNewLabel($value["name"], $value["color"]))
+				if (!$this->addNewLabel($value['name'], $value['color']))
 				{
 					unset($this->arrAcceptedLabels[$key]);
-					echo "Could not add new label: " . $value["name"] . " \n<br>\n";
+					echo 'Could not add new label: ' . $value['name'] . " \n<br>\n";
 				}
 				else
 				{
-					$arrInsert[] = $value["name"];
+					$arrInsert[] = $value['name'];
 				}
 			}
 		}
@@ -209,33 +209,33 @@ class Redmine2Github
 
 			//  Init some vars
 			$arrAdditionalContent = array();
-			$strUsername = "";
-			$strPassword = "";
+			$strUsername = '';
+			$strPassword = '';
 
 			// User lookup
-			if (key_exists($value["Autor"], $this->arrUser))
+			if (key_exists($value['Autor'], $this->arrUser))
 			{
-				$strUsername = $this->arrUser[$value["Autor"]]["login"];
-				$strPassword = $this->arrUser[$value["Autor"]]["password"];
+				$strUsername = $this->arrUser[$value['Autor']]['login'];
+				$strPassword = $this->arrUser[$value['Autor']]['password'];
 			}
 			else if (is_array($this->arrUser) && count($this->arrUser) > 0)
 			{
 				$arrKeys = array_keys($this->arrUser);
 
-				$strUsername = $this->arrUser[$arrKeys[0]]["login"];
-				$strPassword = $this->arrUser[$arrKeys[0]]["password"];
+				$strUsername = $this->arrUser[$arrKeys[0]]['login'];
+				$strPassword = $this->arrUser[$arrKeys[0]]['password'];
 
-				$arrAdditionalContent[] = vsprintf($this->strOriginalAutor, array($value["Autor"], $value["Created"]));
+				$arrAdditionalContent[] = vsprintf($this->strOriginalAutor, array($value['Autor'], $value['Created']));
 			}
 			else
 			{
-				throw new Exception("No fallback user found.");
+				throw new Exception('No fallback user found.');
 			}
 
 			// User lookup for assigned
-			if (key_exists($value["Assigned"], $this->arrUser))
+			if (key_exists($value['Assigned'], $this->arrUser))
 			{
-				$strAssignee = $this->arrUser[$value["Assigned"]]["login"];
+				$strAssignee = $this->arrUser[$value['Assigned']]['login'];
 			}
 			else
 			{
@@ -243,47 +243,47 @@ class Redmine2Github
 			}
 
 			// Basic parameter
-			$strTitle = $value["Topic"];
-			$strBody = $value["Description"];
+			$strTitle = $value['Topic'];
+			$strBody = $value['Description'];
 
 			// Build labels
 			$arrLabels = array();
 
-			if (key_exists($value["Status"], $this->arrAcceptedLabels))
+			if (key_exists($value['Status'], $this->arrAcceptedLabels))
 			{
-				$arrLabels[] = $this->arrAcceptedLabels[$value["Status"]]["name"];
+				$arrLabels[] = $this->arrAcceptedLabels[$value['Status']]['name'];
 			}
 
-			if (key_exists($value["Tracker"], $this->arrAcceptedLabels))
+			if (key_exists($value['Tracker'], $this->arrAcceptedLabels))
 			{
-				$arrLabels[] = $this->arrAcceptedLabels[$value["Tracker"]]["name"];
+				$arrLabels[] = $this->arrAcceptedLabels[$value['Tracker']]['name'];
 			}
 
 			$strMilestone = null;
 			$intMilestone = null;
 
 			// Check milestones
-			if ($value["Target Version"] != "")
+			if ($value['Target Version'] != '')
 			{
-				$strMilestone = vsprintf($this->strMilestoneVersion, array($value["Target Version"]));
+				$strMilestone = vsprintf($this->strMilestoneVersion, array($value['Target Version']));
 
 				if (!key_exists($strMilestone, $this->arrMilestones))
 				{
 					$this->addNewMilestone($strMilestone);
 				}
 
-				$intMilestone = $this->arrMilestones[$strMilestone]["number"];
+				$intMilestone = $this->arrMilestones[$strMilestone]['number'];
 			}
 
 			// Check if we have an update or a new issue
-			if (($intKey = array_search($value["Topic"], $this->arrIssues)) !== FALSE)
+			if (($intKey = array_search($value['Topic'], $this->arrIssues)) !== FALSE)
 			{
-				$this->arrCSV[$key]["updateID"] = $intKey;
-				$this->arrCSV[$key]["execute"] = $this->buildCurl($strUsername, $strPassword, $strTitle, $strBody, $strAssignee, $intMilestone, $arrLabels, $arrAdditionalContent, $intKey);
+				$this->arrCSV[$key]['updateID'] = $intKey;
+				$this->arrCSV[$key]['execute'] = $this->buildCurl($strUsername, $strPassword, $strTitle, $strBody, $strAssignee, $intMilestone, $arrLabels, $arrAdditionalContent, $intKey);
 			}
 			else
 			{
-				$this->arrCSV[$key]["execute"] = $this->buildCurl($strUsername, $strPassword, $strTitle, $strBody, $strAssignee, $intMilestone, $arrLabels, $arrAdditionalContent);
+				$this->arrCSV[$key]['execute'] = $this->buildCurl($strUsername, $strPassword, $strTitle, $strBody, $strAssignee, $intMilestone, $arrLabels, $arrAdditionalContent);
 			}
 		}
 
@@ -291,7 +291,7 @@ class Redmine2Github
 		foreach ($this->arrCSV as $key => $value)
 		{
 			// Skip empty, first one or entries without execute parameter
-			if ($key == 0 || empty($value) || $value["execute"] == "")
+			if ($key == 0 || empty($value) || $value['execute'] == '')
 			{
 				continue;
 			}
@@ -299,28 +299,28 @@ class Redmine2Github
 			// Insert/Update issue
 			try
 			{
-				$arrResponse = $this->executeProc($value["execute"]);
+				$arrResponse = $this->executeProc($value['execute']);
 
-				if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
+				if (isset($arrResponse['data']['message']) && ($arrResponse['data']['message'] == 'Max number of login attempt exceeded' || $arrResponse['data']['message'] == 'Bad credentials'))
 				{
-					throw new Exception("Wrong user login.");
+					throw new Exception('Wrong user login.');
 				}
 
-				if (!isset($arrResponse["data"]["number"]))
+				if (!isset($arrResponse['data']['number']))
 				{
-					throw new Exception("Error by adding issue. Response from server: " . json_encode($arrResponse["data"]));
+					throw new Exception('Error by adding issue. Response from server: ' . json_encode($arrResponse['data']));
 				}
 
-				if ($value["Status"] == "Closed" || $value["Status"] == "Completed")
+				if ($value['Status'] == 'Closed' || $value['Status'] == 'Completed')
 				{
-					$this->closeIssue($arrResponse["data"]["number"]);
+					$this->closeIssue($arrResponse['data']['number']);
 				}
 
-				echo "Imported #" . $value["id"] . " " . $value['Topic'] . "\n";
+				echo 'Imported #' . $value['id'] . ' ' . $value['Topic'] . "\n";
 			}
 			catch (Exception $exc)
 			{
-				echo "Skiped #" . $value["id"] . " with message: " . $exc->getMessage() . "\n";
+				echo 'Skiped #' . $value['id'] . ' with message: ' . $exc->getMessage() . "\n";
 			}
 		}
 	}
@@ -334,19 +334,19 @@ class Redmine2Github
 	 */
 	protected function getAllLabels()
 	{
-		$strCurl = "curl -i " . $this->strRepoURL . "/labels -X GET";
+		$strCurl = 'curl -i ' . $this->strRepoURL . '/labels -X GET';
 
 		$arrLables = $this->executeProc($strCurl);
-		$arrLables = $arrLables["data"];
+		$arrLables = $arrLables['data'];
 
-		if (!is_array($arrLables) || (key_exists("message", $arrLables) && $arrLables["message"] == "Not Found"))
+		if (!is_array($arrLables) || (key_exists('message', $arrLables) && $arrLables['message'] == 'Not Found'))
 		{
-			throw new Exception("Could not load labels from repo.");
+			throw new Exception('Could not load labels from repo.');
 		}
 
 		foreach ($arrLables as $key => $value)
 		{
-			$this->arrLabels[$value["name"]] = $value;
+			$this->arrLabels[$value['name']] = $value;
 		}
 	}
 
@@ -359,22 +359,22 @@ class Redmine2Github
 		$strCurl = "curl -i '" . $this->strRepoURL . "/milestones?state=open' -X GET";
 
 		$arrMilestonesOpened = $this->executeProc($strCurl);
-		$arrMilestonesOpened = $arrMilestonesOpened["data"];
+		$arrMilestonesOpened = $arrMilestonesOpened['data'];
 
-		if (!is_array($arrMilestonesOpened) || (key_exists("message", $arrMilestonesOpened) && $arrMilestonesOpened["message"] == "Not Found"))
+		if (!is_array($arrMilestonesOpened) || (key_exists('message', $arrMilestonesOpened) && $arrMilestonesOpened['message'] == 'Not Found'))
 		{
-			throw new Exception("Could not load labels from repo.");
+			throw new Exception('Could not load labels from repo.');
 		}
 
 		// Load all closed milestones
 		$strCurl = "curl -i '" . $this->strRepoURL . "/milestones?state=closed' -X GET";
 
 		$arrMilestonesClosed = $this->executeProc($strCurl);
-		$arrMilestonesClosed = $arrMilestonesClosed["data"];
+		$arrMilestonesClosed = $arrMilestonesClosed['data'];
 
-		if (!is_array($arrMilestonesClosed) || (key_exists("message", $arrMilestonesClosed) && $arrMilestonesClosed["message"] == "Not Found"))
+		if (!is_array($arrMilestonesClosed) || (key_exists('message', $arrMilestonesClosed) && $arrMilestonesClosed['message'] == 'Not Found'))
 		{
-			throw new Exception("Could not load labels from repo.");
+			throw new Exception('Could not load labels from repo.');
 		}
 		
 		// Merge both
@@ -384,7 +384,7 @@ class Redmine2Github
 		// Set Title as key
 		foreach ($arrMilestones as $key => $value)
 		{
-			$this->arrMilestones[$value["title"]] = $value;
+			$this->arrMilestones[$value['title']] = $value;
 		}
 	}
 
@@ -401,11 +401,11 @@ class Redmine2Github
 			$strCurl = "curl -i '" . $this->strRepoURL . "/issues?state=open&page=$i'";
 			$arrIssuesOpen = $this->executeProc($strCurl);
 
-			$arrIssues = array_merge($arrIssues, $arrIssuesOpen["data"]);
+			$arrIssues = array_merge($arrIssues, $arrIssuesOpen['data']);
 
-			if (key_exists("Link", $arrIssuesOpen["header"]))
+			if (key_exists('Link', $arrIssuesOpen['header']))
 			{
-				if (strpos($arrIssuesOpen["header"]["Link"], "rel=\"next\"") === FALSE)
+				if (strpos($arrIssuesOpen['header']['Link'], "rel=\"next\"") === FALSE)
 				{
 					break;
 				}
@@ -422,11 +422,11 @@ class Redmine2Github
 			$strCurl = "curl -i '" . $this->strRepoURL . "/issues?page=$i&state=closed'";
 			$arrIssuesClosed = $this->executeProc($strCurl);
 
-			$arrIssues = array_merge($arrIssues, $arrIssuesClosed["data"]);
+			$arrIssues = array_merge($arrIssues, $arrIssuesClosed['data']);
 
-			if (key_exists("Link", $arrIssuesClosed["header"]))
+			if (key_exists('Link', $arrIssuesClosed['header']))
 			{
-				if (strpos($arrIssuesClosed["header"]["Link"], "rel=\"next\"") === FALSE)
+				if (strpos($arrIssuesClosed['header']['Link'], "rel=\"next\"") === FALSE)
 				{
 					break;
 				}
@@ -437,14 +437,14 @@ class Redmine2Github
 			}
 		}
 
-		if (!is_array($arrIssues) || (key_exists("message", $arrIssues) && $arrIssues["message"] == "Not Found"))
+		if (!is_array($arrIssues) || (key_exists('message', $arrIssues) && $arrIssues['message'] == 'Not Found'))
 		{
-			throw new Exception("Could not load issues from repo.");
+			throw new Exception('Could not load issues from repo.');
 		}
 
 		foreach ($arrIssues as $key => $value)
 		{
-			$this->arrIssues[$value["number"]] = $value["title"];
+			$this->arrIssues[$value['number']] = $value['title'];
 		}
 	}
 
@@ -457,17 +457,17 @@ class Redmine2Github
 	 */
 	protected function addNewLabel($strName, $strColor)
 	{
-		$strParameter = json_encode(array("name" => $strName, "color" => $strColor));
+		$strParameter = json_encode(array('name' => $strName, 'color' => $strColor));
 		$strCurl = "curl -i " . $this->strRepoURL . "/labels -u \"" . $this->strRepoUser . ":" . $this->strRepoPassword . "\" -X POST -d '$strParameter'";
 
 		$arrResponse = $this->executeProc($strCurl);
 
-		if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
+		if (isset($arrResponse['data']['message']) && ($arrResponse['data']['message'] == 'Max number of login attempt exceeded' || $arrResponse['data']['message'] == 'Bad credentials'))
 		{
-			throw new Exception("Error by login with user: $this->strRepoUser to create labels.");
+			throw new Exception('Error by login with user: ' . $this->strRepoUser . ' to create labels.');
 		}
 
-		$arrResponse = $arrResponse["data"];
+		$arrResponse = $arrResponse['data'];
 
 		if ($arrResponse === FALSE)
 		{
@@ -488,17 +488,17 @@ class Redmine2Github
 	 */
 	protected function addNewMilestone($strName)
 	{
-		$strParameter = json_encode(array("title" => $strName));
+		$strParameter = json_encode(array('title' => $strName));
 		$strCurl = "curl -i " . $this->strRepoURL . "/milestones -u \"" . $this->strRepoUser . ":" . $this->strRepoPassword . "\" -X POST -d '$strParameter'";
 
 		$arrResponse = $this->executeProc($strCurl);
 
-		if (isset($arrResponse["data"]["message"]) && ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials"))
+		if (isset($arrResponse['data']['message']) && ($arrResponse['data']['message'] == 'Max number of login attempt exceeded' || $arrResponse['data']['message'] == 'Bad credentials'))
 		{
 			throw new Exception("Error by login with user: $this->strRepoUser to create milestones.");
 		}
 
-		$arrResponse = $arrResponse["data"];
+		$arrResponse = $arrResponse['data'];
 
 		$this->arrMilestones[$strName] = $arrResponse;
 
@@ -519,18 +519,18 @@ class Redmine2Github
 	 */
 	protected function closeIssue($intID)
 	{
-		$strParameter = json_encode(array("state" => "closed"));
+		$strParameter = json_encode(array('state' => 'closed'));
 		$strCurl = "curl -i " . $this->strRepoURL . "/issues/$intID -u \"" . $this->strRepoUser . ":" . $this->strRepoPassword . "\" -X POST -d '$strParameter'";
 
 		$arrResponse = $this->executeProc($strCurl);
 
-		if ($arrResponse["data"]["message"] == "Max number of login attempt exceeded" || $arrResponse["data"]["message"] == "Bad credentials")
+		if ($arrResponse['data']['message'] == 'Max number of login attempt exceeded' || $arrResponse['data']['message'] == 'Bad credentials')
 		{
 			throw new Exception("Could not close issue $intID, because we have a wrong user or password.");
 		}
-		else if (strpos($arrResponse["header"]["Status"], "200 OK") === FALSE)
+		else if (strpos($arrResponse['header']['Status'], '200 OK') === FALSE)
 		{
-			throw new Exception("Could not close issue $intID, because we have erro on server side with id: " . $arrResponse["header"]["Status"]);
+			throw new Exception("Could not close issue $intID, because we have erro on server side with id: " . $arrResponse['header']['Status']);
 		}
 	}
 
@@ -552,12 +552,12 @@ class Redmine2Github
 	{
 		if (empty($strUsername) || empty($strUserpassword))
 		{
-			throw new Exception("Missing user login.");
+			throw new Exception('Missing user login.');
 		}
 
 		if (empty($strTitle))
 		{
-			throw new Exception("Missing issue title.");
+			throw new Exception('Missing issue title.');
 		}
 
 		$arrParamteter = array();
@@ -565,37 +565,37 @@ class Redmine2Github
 		// Build body
 		if (!empty($arrAdditionalContent) && is_array($arrAdditionalContent) && count($arrAdditionalContent) > 0)
 		{
-			$arrParamteter["body"] = $strBody;
-			$arrParamteter["body"] .= "\n\n";
+			$arrParamteter['body'] = $strBody;
+			$arrParamteter['body'] .= "\n\n";
 
 			foreach ($arrAdditionalContent as $key => $value)
 			{
-				$arrParamteter["body"] .= $value . "\n";
+				$arrParamteter['body'] .= $value . "\n";
 			}
 		}
 		else
 		{
-			$arrParamteter["body"] = $strBody;
+			$arrParamteter['body'] = $strBody;
 		}
 
-		$arrParamteter["title"] = $strTitle;
+		$arrParamteter['title'] = $strTitle;
 
 		// Check assignee
 		if (!empty($strAssignee))
 		{
-			$arrParamteter["assignee"] = $strAssignee;
+			$arrParamteter['assignee'] = $strAssignee;
 		}
 
 		// Check milestone
 		if ($intMilestone != null)
 		{
-			$arrParamteter["milestone"] = $intMilestone;
+			$arrParamteter['milestone'] = $intMilestone;
 		}
 
 		// Check and build lables
 		if (!empty($arrLabels) && is_array($arrLabels) && count($arrLabels) != 0)
 		{
-			$arrParamteter["labels"] = $arrLabels;
+			$arrParamteter['labels'] = $arrLabels;
 		}
 
 		if ($intUpdateID == FALSE)
@@ -619,9 +619,9 @@ class Redmine2Github
 	 */
 	protected function checkFile()
 	{
-		if (!file_exists($this->strPath . "/" . $this->strCSVPath))
+		if (!file_exists($this->strPath . '/' . $this->strCSVPath))
 		{
-			throw new Exception("Missing CSV file");
+			throw new Exception('Missing CSV file');
 		}
 	}
 
@@ -645,9 +645,9 @@ class Redmine2Github
 	protected function importCSV()
 	{
 		// Read CSV and formate it
-		$objFH = fopen($this->strPath . "/" . $this->strCSVPath, "r+");
+		$objFH = fopen($this->strPath . '/' . $this->strCSVPath, 'r+');
 
-		$strFileBody = "";
+		$strFileBody = '';
 
 		while (($strRow = fgets($objFH)) !== FALSE)
 		{
@@ -656,7 +656,7 @@ class Redmine2Github
 
 		fclose($objFH);
 
-		$strFileBody = str_replace(array("Ä", "Ö", "Ü", "ä", "ö", "ü"), array("##Ä", "##Ö", "##Ü", "##ä", "##ö", "##ü"), $strFileBody);
+		$strFileBody = str_replace(array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü'), array('##Ä', '##Ö', '##Ü', '##ä', '##ö', '##ü'), $strFileBody);
 
 		// Write Temp file
 		$objTFH = tmpfile();
@@ -674,11 +674,11 @@ class Redmine2Github
 		{
 			foreach ($value as $keyField => $valueField)
 			{
-				$valueField = str_replace(array("##Ä", "##Ö", "##Ü", "##ä", "##ö", "##ü"), array("Ä", "Ö", "Ü", "ä", "ö", "ü"), $valueField);
+				$valueField = str_replace(array('##Ä', '##Ö', '##Ü', '##ä', '##ö', '##ü'), array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü'), $valueField);
 
 				switch ($keyField)
 				{
-					case "Description":
+					case 'Description':
 						$valueField = $this->format($valueField);
 						break;
 				}
@@ -700,9 +700,9 @@ class Redmine2Github
 		// execute the command
 		$proc = proc_open(
 				$strExecute, array(
-			0 => array("pipe", "r"),
-			1 => array("pipe", "w"),
-			2 => array("pipe", "w")
+			0 => array('pipe', 'r'),
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w')
 				), $arrPipes);
 
 		// test if command start failed
@@ -736,10 +736,10 @@ class Redmine2Github
 
 		foreach ($mixResponse as $key => $value)
 		{
-			if (strpos($value, "HTTP/1.1") === FALSE)
+			if (strpos($value, 'HTTP/1.1') === FALSE)
 			{
 				// Save Header
-				$arrHeaderPair = explode(":", $value, 2);
+				$arrHeaderPair = explode(':', $value, 2);
 				$arrHeader[$arrHeaderPair[0]] = $arrHeaderPair[1];
 			}
 
@@ -747,22 +747,22 @@ class Redmine2Github
 			unset($mixResponse[$key]);
 
 			// Break if we have reached the last header field
-			if (strpos($value, "Content-Length") !== FALSE)
+			if (strpos($value, 'Content-Length') !== FALSE)
 			{
 				break;
 			}
 		}
 
-		$mixResponse = json_decode(trim(implode("", $mixResponse)), true);
+		$mixResponse = json_decode(trim(implode('', $mixResponse)), true);
 
-		if (strpos($arrHeader["Status"], "200 OK") === FALSE && strpos($arrHeader["Status"], "201 Created") === FALSE)
+		if (strpos($arrHeader['Status'], '200 OK') === FALSE && strpos($arrHeader['Status'], '201 Created') === FALSE)
 		{
 			//echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
 
-			throw new Exception("We have an error on server side with id: " . $arrHeader["Status"] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
+			throw new Exception('We have an error on server side with id: ' . $arrHeader['Status'] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
 		}
 
-		return array("data" => $mixResponse, "header" => $arrHeader);
+		return array('data' => $mixResponse, 'header' => $arrHeader);
 	}
 
 	protected function escape($string)
@@ -779,6 +779,6 @@ try
 }
 catch (Exception $exc)
 {
-	echo "Sorry we have an error:  ";
+	echo 'Sorry we have an error:  ';
 	echo $exc->getMessage();
 }
