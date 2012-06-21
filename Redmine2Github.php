@@ -106,7 +106,6 @@ class Redmine2Github
 		
 		foreach ($arrArgs as $arg)
 		{
-			var_dump($arg);
 			// custom config
 			if (strpos($arg, 'config:') !== false)
 			{
@@ -706,8 +705,6 @@ class Redmine2Github
 			
 			$this->arrCSV = $arrCSVnew;
 		}
-
-		var_dump($this->arrCSV);exit;
 	}
 
 	/**
