@@ -82,7 +82,7 @@ class Redmine2Github
 
 
 	/**
-	 * Basic use:
+	 * Basic usage:
 	 * php Redmine2Github.php
 	 * 
 	 * It will get the default config "config.php" but you can specify another if you like (to easily switch)
