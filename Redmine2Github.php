@@ -761,29 +761,19 @@ class Redmine2Github
 			throw new Exception("Program execution failed command: $strExecute\n  stdout: $strOut\n stderr: $strErr");
 		}
 
-		$mixResponse = explode("\n", $strOut);
+		list($header, $body) = explode("\r\n\r\n", $strOut, 2);
+
+		$headers = explode("\n", $header);
 		$arrHeader = array();
 
-		foreach ($mixResponse as $key => $value)
+		foreach ($headers as $header)
 		{
-			if (strpos($value, 'HTTP/1.1') === false)
-			{
-				// Save Header
-				$arrHeaderPair = explode(':', $value, 2);
-				$arrHeader[$arrHeaderPair[0]] = $arrHeaderPair[1];
-			}
-
-			// Unset
-			unset($mixResponse[$key]);
-
-			// Break if we have reached the last header field
-			if (strpos($value, 'Content-Length') !== false)
-			{
-				break;
-			}
+			// Save Header
+			$arrHeaderPair = explode(':', $header, 2);
+			$arrHeader[$arrHeaderPair[0]] = $arrHeaderPair[1];
 		}
 
-		$mixResponse = json_decode(trim(implode('', $mixResponse)), true);
+		$bodydecoded = json_decode($body, true);
 
 		if (strpos($arrHeader['Status'], '200 OK') === false && strpos($arrHeader['Status'], '201 Created') === false)
 		{
@@ -792,7 +782,7 @@ class Redmine2Github
 			throw new Exception('We have an error on server side with id: ' . $arrHeader['Status'] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
 		}
 
-		return array('data' => $mixResponse, 'header' => $arrHeader);
+		return array('data' => $bodydecoded, 'header' => $arrHeader);
 	}
 
 	protected function escape($string)
