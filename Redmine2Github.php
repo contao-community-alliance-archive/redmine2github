@@ -156,7 +156,7 @@ class Redmine2Github
 		// Build Issue
 		$this->runImportIssues();
 
-		echo 'Done\n';
+		echo "Done\n";
 	}
 
 	/**
@@ -353,7 +353,7 @@ class Redmine2Github
 
 		if (!is_array($arrMilestonesOpened) || (key_exists('message', $arrMilestonesOpened) && $arrMilestonesOpened['message'] == 'Not Found'))
 		{
-			throw new Exception('Could not load labels from repo.');
+			throw new Exception('Could not load open milestones from repo.');
 		}
 
 		// Load all closed milestones
@@ -364,7 +364,7 @@ class Redmine2Github
 
 		if (!is_array($arrMilestonesClosed) || (key_exists('message', $arrMilestonesClosed) && $arrMilestonesClosed['message'] == 'Not Found'))
 		{
-			throw new Exception('Could not load labels from repo.');
+			throw new Exception('Could not load closed milestones from repo.');
 		}
 		
 		// Merge both
