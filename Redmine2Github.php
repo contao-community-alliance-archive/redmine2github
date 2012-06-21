@@ -276,7 +276,7 @@ class Redmine2Github
 			}
 
 			// Check if we have an update or a new issue
-			if (($intKey = array_search($value['Topic'], $this->arrIssues)) !== FALSE)
+			if (($intKey = array_search($value['Topic'], $this->arrIssues)) !== false)
 			{
 				$this->arrCSV[$key]['updateID'] = $intKey;
 				$this->arrCSV[$key]['execute'] = $this->buildCurl($strUsername, $strPassword, $strTitle, $strBody, $strAssignee, $intMilestone, $arrLabels, $arrAdditionalContent, $intKey);
@@ -405,7 +405,7 @@ class Redmine2Github
 
 			if (key_exists('Link', $arrIssuesOpen['header']))
 			{
-				if (strpos($arrIssuesOpen['header']['Link'], "rel=\"next\"") === FALSE)
+				if (strpos($arrIssuesOpen['header']['Link'], "rel=\"next\"") === false)
 				{
 					break;
 				}
@@ -426,7 +426,7 @@ class Redmine2Github
 
 			if (key_exists('Link', $arrIssuesClosed['header']))
 			{
-				if (strpos($arrIssuesClosed['header']['Link'], "rel=\"next\"") === FALSE)
+				if (strpos($arrIssuesClosed['header']['Link'], "rel=\"next\"") === false)
 				{
 					break;
 				}
@@ -469,7 +469,7 @@ class Redmine2Github
 
 		$arrResponse = $arrResponse['data'];
 
-		if ($arrResponse === FALSE)
+		if ($arrResponse === false)
 		{
 			return false;
 		}
@@ -502,7 +502,7 @@ class Redmine2Github
 
 		$this->arrMilestones[$strName] = $arrResponse;
 
-		if ($arrResponse === FALSE)
+		if ($arrResponse === false)
 		{
 			return false;
 		}
@@ -528,7 +528,7 @@ class Redmine2Github
 		{
 			throw new Exception("Could not close issue $intID, because we have a wrong user or password.");
 		}
-		else if (strpos($arrResponse['header']['Status'], '200 OK') === FALSE)
+		else if (strpos($arrResponse['header']['Status'], '200 OK') === false)
 		{
 			throw new Exception("Could not close issue $intID, because we have erro on server side with id: " . $arrResponse['header']['Status']);
 		}
@@ -598,7 +598,7 @@ class Redmine2Github
 			$arrParamteter['labels'] = $arrLabels;
 		}
 
-		if ($intUpdateID == FALSE)
+		if ($intUpdateID == false)
 		{
 			$strParameter = $this->escape(json_encode($arrParamteter));
 			return "curl -i " . $this->strRepoURL . "/issues -u \"" . $strUsername . ":" . $strUserpassword . "\" -X POST -d '$strParameter'";
@@ -649,7 +649,7 @@ class Redmine2Github
 
 		$strFileBody = '';
 
-		while (($strRow = fgets($objFH)) !== FALSE)
+		while (($strRow = fgets($objFH)) !== false)
 		{
 			$strFileBody .= $strRow;
 		}
@@ -664,7 +664,7 @@ class Redmine2Github
 		rewind($objTFH);
 
 		// Convert to array
-		while (($arrRow = fgetcsv($objTFH, 0, $this->strCSVDelimiter)) !== FALSE)
+		while (($arrRow = fgetcsv($objTFH, 0, $this->strCSVDelimiter)) !== false)
 		{
 			$this->arrCSV[] = array_combine($this->arrCSVKeys, $arrRow);
 		}
@@ -736,7 +736,7 @@ class Redmine2Github
 
 		foreach ($mixResponse as $key => $value)
 		{
-			if (strpos($value, 'HTTP/1.1') === FALSE)
+			if (strpos($value, 'HTTP/1.1') === false)
 			{
 				// Save Header
 				$arrHeaderPair = explode(':', $value, 2);
@@ -747,7 +747,7 @@ class Redmine2Github
 			unset($mixResponse[$key]);
 
 			// Break if we have reached the last header field
-			if (strpos($value, 'Content-Length') !== FALSE)
+			if (strpos($value, 'Content-Length') !== false)
 			{
 				break;
 			}
@@ -755,7 +755,7 @@ class Redmine2Github
 
 		$mixResponse = json_decode(trim(implode('', $mixResponse)), true);
 
-		if (strpos($arrHeader['Status'], '200 OK') === FALSE && strpos($arrHeader['Status'], '201 Created') === FALSE)
+		if (strpos($arrHeader['Status'], '200 OK') === false && strpos($arrHeader['Status'], '201 Created') === false)
 		{
 			//echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
 
