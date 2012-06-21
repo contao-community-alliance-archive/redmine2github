@@ -191,10 +191,10 @@ class Redmine2Github
 			$strPassword = '';
 
 			// User lookup
-			if (key_exists($value['Autor'], $this->arrConfig['users']))
+			if (key_exists($value['Author'], $this->arrConfig['users']))
 			{
-				$strUsername = $this->arrConfig['users'][$value['Autor']]['login'];
-				$strPassword = $this->arrConfig['users'][$value['Autor']]['password'];
+				$strUsername = $this->arrConfig['users'][$value['Author']]['login'];
+				$strPassword = $this->arrConfig['users'][$value['Author']]['password'];
 			}
 			else if (is_array($this->arrConfig['users']) && count($this->arrConfig['users']) > 0)
 			{
@@ -203,7 +203,7 @@ class Redmine2Github
 				$strUsername = $this->arrConfig['users'][$arrKeys[0]]['login'];
 				$strPassword = $this->arrConfig['users'][$arrKeys[0]]['password'];
 
-				$arrAdditionalContent[] = vsprintf($this->arrConfig['originalAuthor'], array($value['Autor'], $value['Created']));
+				$arrAdditionalContent[] = vsprintf($this->arrConfig['originalAuthor'], array($value['Author'], $value['Created']));
 			}
 			else
 			{
