@@ -289,7 +289,7 @@ class Redmine2Github
 					throw new Exception('Error by adding issue. Response from server: ' . json_encode($arrResponse['data']));
 				}
 
-				if ($value['Status'] == 'Closed' || $value['Status'] == 'Completed')
+				if (in_array($value['Status'], $this->arrConfig['closedStatus']))
 				{
 					$this->closeIssue($arrResponse['data']['number']);
 				}

@@ -109,6 +109,16 @@ $arrRedmine2GithubConfig = array
 			'name'		=> 'Completed',
 			'color'		=> 'dddddd'
 		)
-	)
+	),
 
+
+	/**
+	 * Status that should be closed automatically on GitHub
+	 * @var array
+	 */
+	'closedStatus' => array
+	(
+		'Closed',
+		'Completed'
+	)
 );
