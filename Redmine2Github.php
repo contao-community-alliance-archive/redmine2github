@@ -95,18 +95,31 @@ class Redmine2Github
 	{
 		$strConfig = 'config.php';
 		
-		// custom config
-		if (strpos($_SERVER['argv'][1], 'config:') !== false)
+		// args
+		array_shift($_SERVER['argv']);
+		$arrArgs = $_SERVER['argv'];
+		
+		if (!is_array($arrArgs))
 		{
-			$chunks = explode(':', $_SERVER['argv'][1]);
-			$strConfig = $chunks[1] . '.php';
+			$arrArgs = array();
 		}
-
-		// one ticket only
-		if ($_SERVER['argv'][2] && is_numeric($_SERVER['argv'][2]))
+		
+		foreach ($arrArgs as $arg)
 		{
-			$this->blnOneTicketOnly = true;
-			$this->intTicketId = (int) $_SERVER['argv'][2];
+			var_dump($arg);
+			// custom config
+			if (strpos($arg, 'config:') !== false)
+			{
+				$chunks = explode(':', $arg);
+				$strConfig = $chunks[1] . '.php';
+			}
+
+			// one ticket only
+			if (is_numeric($arg))
+			{
+				$this->blnOneTicketOnly = true;
+				$this->intTicketId = (int) $arg;
+			}
 		}
 
 		$this->strPath = getcwd();
@@ -268,8 +281,8 @@ class Redmine2Github
 		// Execute
 		foreach ($this->arrCSV as $key => $value)
 		{
-			// Skip empty, first one or entries without execute parameter
-			if ($key == 0 || empty($value) || $value['execute'] == '')
+			// Skip empty or entries without execute parameter
+			if (empty($value) || $value['execute'] == '')
 			{
 				continue;
 			}
@@ -644,6 +657,7 @@ class Redmine2Github
 		// Convert to array
 		while (($arrRow = fgetcsv($objTFH, 0, $this->arrConfig['csvDelimiter'])) !== false)
 		{
+			
 			$this->arrCSV[] = array_combine($this->arrConfig['csvKeys'], $arrRow);
 		}
 
@@ -652,6 +666,7 @@ class Redmine2Github
 		{
 			foreach ($value as $keyField => $valueField)
 			{
+				
 				$valueField = str_replace(array('##Ä', '##Ö', '##Ü', '##ä', '##ö', '##ü'), array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü'), $valueField);
 
 				switch ($keyField)
@@ -664,6 +679,35 @@ class Redmine2Github
 				$this->arrCSV[$key][$keyField] = $valueField;
 			}
 		}
+
+		// skip the first entry as it contains the headers
+		array_shift($this->arrCSV);
+		
+		// only one ticket feature
+		if ($this->blnOneTicketOnly)
+		{
+			$arrCSVnew = array();
+			$blnFound = false;
+			
+			foreach ($this->arrCSV as $key => $value)
+			{
+				if ($value['id'] == $this->intTicketId)
+				{
+					$arrCSVnew = $value;
+					$blnFound = true;
+				}
+			}
+
+			if (!$blnFound)
+			{
+				throw new Exception('You tried to only import ticket id "' . $this->intTicketId . '" which is not defined in the csv file.');
+				
+			}
+			
+			$this->arrCSV = $arrCSVnew;
+		}
+
+		var_dump($this->arrCSV);exit;
 	}
 
 	/**
