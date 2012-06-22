@@ -234,7 +234,7 @@ class Redmine2Github
 				$strUsername = $this->arrConfig['users'][$arrKeys[0]]['login'];
 				$strPassword = $this->arrConfig['users'][$arrKeys[0]]['password'];
 
-				$arrAdditionalContent[] = vsprintf($this->arrConfig['originalAuthor'], array($value['Author'], $value['Created']));
+				$arrAdditionalContent[] = vsprintf($this->arrConfig['originalAuthor'], array($value['Author'], $value['Created'], $value['id']));
 			}
 			else
 			{

@@ -70,7 +70,7 @@ $arrRedmine2GithubConfig = array
 	/**
 	 * Messages
 	 */
-	'originalAuthor'	=> '*--- Originally created by %s on %s.*',
+	'originalAuthor'	=> '*--- Originally created by %s on %s. Ticket-Number was: %s*',
 	'milestoneVersion'	=> 'Version %s',
 
 	/**
