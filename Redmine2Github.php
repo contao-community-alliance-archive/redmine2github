@@ -79,6 +79,9 @@ class Redmine2Github
 	protected $blnOneTicketOnly = false;
 	protected $intTicketId = 0;
 	protected $arrConfig = array();
+	protected $blnLogTicketRelations = false;
+	protected $strTicketLogginTpl = 'tl_template.tpl';
+	protected $arrTicketRelations = array();
 
 
 	/**
@@ -119,6 +122,14 @@ class Redmine2Github
 				$this->blnOneTicketOnly = true;
 				$this->intTicketId = (int) $arg;
 			}
+
+			// ticket relation logging
+			if (strpos($arg, 'tl:') !== false)
+			{
+				$chunks = explode(':', $arg);
+				$this->strTicketLogginTpl = $chunks[1] . '.tpl';
+				$this->blnLogTicketRelations = true;
+			}
 		}
 
 		$this->strPath = getcwd();
@@ -155,6 +166,11 @@ class Redmine2Github
 
 		// Build Issue
 		$this->runImportIssues();
+		
+		if ($this->blnLogTicketRelations)
+		{
+			$this->logTicketRelations();
+		}
 
 		echo "Done\n";
 	}
@@ -308,7 +324,10 @@ class Redmine2Github
 				{
 					$this->closeIssue($arrResponse['data']['number']);
 				}
-
+				
+				// store old/new issue relation
+				$this->arrTicketRelations[$arrResponse['data']['number']] = $value['id'];
+				
 				echo 'Imported #' . $value['id'] . ' ' . $value['Topic'] . "\n";
 			}
 			catch (Exception $exc)
@@ -789,6 +808,20 @@ class Redmine2Github
 	protected function escape($string)
 	{
 		return str_replace(array("(", ")", "'", "?", "`"), array("\\u0028", "\\u0029", "\\u0027", "\\u00DF", "\\u0060"), $string);
+	}
+	
+	protected function logTicketRelations()
+	{
+		$strBuffer = '';
+		$arrRelations = $this->arrTicketRelations;
+		ob_start();
+		include $this->strPath . '/' . $this->strTicketLogginTpl;
+		$strBuffer = ob_get_contents();
+		ob_end_clean();
+
+		$handle = fopen($this->strPath . '/ticketrelations.log','w');
+		fwrite($handle, $strBuffer);
+		fclose($handle);
 	}
 }
 
