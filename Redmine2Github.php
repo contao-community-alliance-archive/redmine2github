@@ -787,9 +787,16 @@ class Redmine2Github
 
 		$headers = explode("\n", $header);
 		$arrHeader = array();
+		$strStatus = '';
 
-		foreach ($headers as $header)
+		foreach ($headers as $k => $header)
 		{
+			// extract status
+			if ($k == 0)
+			{
+				$chunks = explode(' ', $header, 3);
+				$strStatus = $chunks[1];
+			}
 			// Save Header
 			$arrHeaderPair = explode(':', $header, 2);
 			$arrHeader[$arrHeaderPair[0]] = $arrHeaderPair[1];
@@ -797,7 +804,7 @@ class Redmine2Github
 
 		$bodydecoded = json_decode($body, true);
 
-		if (strpos($arrHeader['Status'], '200 OK') === false && strpos($arrHeader['Status'], '201 Created') === false)
+		if (!in_array($strStatus, array('200', '201')))
 		{
 			throw new Exception('We have an error on server side with id: ' . $arrHeader['Status'] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
 		}
