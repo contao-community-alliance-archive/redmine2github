@@ -196,6 +196,9 @@ class Redmine2Github
 			{
 				continue;
 			}
+			
+			// utf8 encode otherwise json_encode will generate null
+			$value = array_map('utf8_encode', $value);
 
 			//  Init some vars
 			$arrAdditionalContent = array();
@@ -777,8 +780,6 @@ class Redmine2Github
 
 		if (strpos($arrHeader['Status'], '200 OK') === false && strpos($arrHeader['Status'], '201 Created') === false)
 		{
-			//echo "Execution command: $strExecute <br/>\n  stdout: $strOut  <br/>\n stderr: $strErr";
-
 			throw new Exception('We have an error on server side with id: ' . $arrHeader['Status'] . "\n" . $strExecute . "\n" . print_r($arrHeader, true));
 		}
 
@@ -789,7 +790,6 @@ class Redmine2Github
 	{
 		return str_replace(array("(", ")", "'", "?", "`"), array("\\u0028", "\\u0029", "\\u0027", "\\u00DF", "\\u0060"), $string);
 	}
-
 }
 
 try
