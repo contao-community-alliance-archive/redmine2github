@@ -783,8 +783,10 @@ class Redmine2Github
 			throw new Exception("Program execution failed command: $strExecute\n  stdout: $strOut\n stderr: $strErr");
 		}
 
-		list($header, $body) = explode("\r\n\r\n", $strOut, 2);
-
+		$arrHeaderData = explode("\r\n\r\n", $strOut);
+		$count = count($arrHeaderData);
+		$header = $arrHeaderData[$count - 2];
+		$body = $arrHeaderData[$count - 1];
 		$headers = explode("\n", $header);
 		$arrHeader = array();
 		$strStatus = '';
